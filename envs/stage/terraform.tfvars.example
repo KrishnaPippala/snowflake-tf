@@ -1,0 +1,4 @@
+# Set deploy_user_public_key and all Snowflake connection inputs as Harness secrets.
+app_name     = "my_app"
+environment  = "stage"
+credit_quota = 30
