@@ -24,7 +24,7 @@ variable "credit_quota" {
 }
 
 variable "deploy_user_public_key" {
-  description = "RSA public-key body for the deploy service user, without PEM headers."
+  description = "RSA public key for the deploy service user. PEM headers and line breaks are stripped automatically."
   type        = string
   sensitive   = true
 }

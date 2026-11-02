@@ -2,7 +2,9 @@ locals {
   app         = upper(var.app_name)
   environment = upper(var.environment)
   name_prefix = "${local.app}_${local.environment}"
-  comment     = "Managed by Terraform for application ${local.app} in ${local.environment}."
+  # Snowflake wants the bare key body; accept a full PEM or a collapsed one too.
+  deploy_public_key = replace(var.deploy_user_public_key, "/-----[A-Z ]+-----|\\s|\\\\n/", "")
+  comment           = "Managed by Terraform for application ${local.app} in ${local.environment}."
   schema_names = toset([
     "RAW",
     "STAGE",
@@ -70,7 +72,7 @@ resource "snowflake_grant_account_role" "ro_to_owner" {
 
 resource "snowflake_service_user" "deploy" {
   name              = "${local.name_prefix}_DEPLOY_SVC"
-  rsa_public_key    = var.deploy_user_public_key
+  rsa_public_key    = local.deploy_public_key
   default_role      = snowflake_account_role.owner.name
   default_warehouse = snowflake_warehouse.this.name
   default_namespace = snowflake_database.this.name

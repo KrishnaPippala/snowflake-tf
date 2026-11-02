@@ -1,5 +1,9 @@
 locals {
-  private_key = replace(var.snowflake_private_key, "\\n", "\n")
+  # Accept the key as a real PEM, a single-line PEM (newlines collapsed to spaces
+  # by a secret store), or a PEM with literal "\n" sequences. Strip the armor and
+  # whitespace, then rebuild a PEM the provider can parse.
+  private_key_body = replace(var.snowflake_private_key, "/-----[A-Z ]+-----|\\s|\\\\n/", "")
+  private_key      = "-----BEGIN PRIVATE KEY-----\n${local.private_key_body}\n-----END PRIVATE KEY-----\n"
 }
 
 provider "snowflake" {
